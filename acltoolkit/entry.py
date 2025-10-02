@@ -9,6 +9,8 @@ from acltoolkit.set_objectowner import set_objectowner
 from acltoolkit.give_genericall import give_genericall
 from acltoolkit.give_dcsync import give_dcsync
 from acltoolkit.add_groupmember import add_groupmember
+from acltoolkit.get_resume import get_resume
+
 
 def main():
     logger.init()
@@ -62,6 +64,60 @@ def main():
     )
 
     subparsers = parser.add_subparsers(help="Action", dest="action", required=True)
+
+
+    get_resume_parser = subparsers.add_parser("get-resume", help="Get all Object ACL resumed to actions allowd")
+    get_resume_parser.add_argument(
+        "-out",
+        action="store",
+        help=(
+            "Save json to file"
+        )
+    )
+
+    get_resume_parser.add_argument(
+        "-input",
+        help="Input JSON file (list of objects with Dacl)"
+    )
+
+
+    get_resume_parser.add_argument(
+        "-ignore-sid",
+        action="append",
+        default=[],
+        help="SID to ignore (repeatable)"
+    )
+
+    get_resume_parser.add_argument(
+        "-ignore-name",
+        action="append",
+        default=[],
+        help="Regex name to ignore (repeatable)"
+    )
+
+    get_resume_parser.add_argument(
+        "-all",
+        action="store_true",
+        help=(
+            "List every ACE of the object, even the less-interesting ones"
+        ),
+    )
+
+    get_resume_parser.add_argument(
+        "-no-default-ignores",
+        action="store_true",
+        help=(
+            "ignore defualt ignores"
+        )
+    )
+
+    get_resume_parser.add_argument(
+        "-print-human",
+        action="store_true",
+        help=(
+            "Print results in a human-readable format"
+        ),
+    )
 
     get_objectacl_parser = subparsers.add_parser("get-objectacl", help="Get Object ACL")
 
@@ -207,6 +263,8 @@ def main():
         add_groupmember(options)
     elif options.action == "set-logonscript":
         set_logonscript(options)
+    elif options.action == "get-resume":
+        get_resume(options)
     else:
         raise Exception("Action not implemented: %s" % options.action)
 
